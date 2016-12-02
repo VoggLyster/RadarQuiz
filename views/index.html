@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+    <title>Radar Quiz!!! YEah!</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+<ul id="messages"></ul>
+<form id="team" action="">
+    <input id="name" autocomplete="off" />
+</form>
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+    var socket = io();
+    var buzzer;
+    $('form').submit(function(){
+        socket.emit('join', $('#name').val());
+        var e = document.getElementById("team");
+        e.parentNode.removeChild(e);
+        buzzer = document.createElement("BUTTON");
+        buzzer.className = "btn";
+        buzzer.textContent = "Buzz!";
+        buzzer.onclick = function(){
+            socket.emit('buzz');
+            buzzer.style.color = "green";
+        }
+        document.body.appendChild(buzzer);
+        return false;
+    });
+    socket.on('teamBuzzed', function (msg) {
+        buzzer.textContent = msg;
+        buzzer.style.color = "red";
+    })
+
+</script>
+</body>
+</html>

@@ -2,14 +2,18 @@
  * Created by solys on 02-12-2016.
  */
 
-var app = require("express")();
+var express = require("express");
+var app = express();
 var http= require("http").Server(app);
 var io = require("socket.io")(http);
+var path = require("path");
 
 var teams = [];
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.get('/', function(req, res){
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/views/index.html');
 });
 
 io.on('connection', function(socket){
@@ -19,6 +23,7 @@ io.on('connection', function(socket){
     });
     socket.on("buzz", function () {
         console.log(teams[socket.id] + " buzzed in");
+        io.emit('teamBuzzed',teams[socket.id]);
     });
 });
 
